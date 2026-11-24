@@ -1,0 +1,18 @@
+.git
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+tests
+infra
+cdk.out
+.env
+*.md
+docker-compose.yml
+Makefile
+
+# the UI is built inside the image (stage 1); never ship local builds or host node_modules
+frontend/node_modules
+frontend/dist
+frontend/.vite
+app/static

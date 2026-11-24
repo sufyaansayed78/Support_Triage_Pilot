@@ -1,0 +1,28 @@
+# Run the whole app (API + UI) locally:   docker compose up --build   ->  http://localhost:8000
+services:
+  app:
+    build: .
+    image: support-triage-copilot
+    ports:
+      - "8000:8000"
+    environment:
+      TRIAGE_BACKEND: local               # in-memory stores + keyword classifier; no AWS needed
+      TRIAGE_MIN_GROUNDING_SCORE: "0.1"   # the local bag-of-words retriever scores lower than real embeddings
+    # To run against AWS instead, set TRIAGE_BACKEND=aws and pass credentials/region, e.g.:
+    # env_file: .env
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: triage-frontend
+    command: npm run dev -- --host 0.0.0.0
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_PROXY_TARGET=http://app:8000
+    depends_on:
+      - app
